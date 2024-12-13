@@ -1,13 +1,6 @@
 import datetime
 
-
-# for bot work
-from modules.product import Product
-
-# for testing database
-
-"""from product import Product"""
-
+from bot.database.product import Product
 
 class Order:
 

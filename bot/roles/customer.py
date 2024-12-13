@@ -1,26 +1,10 @@
-# Покупатель (Заказывающий) может заказать коктейль из списка.
-# При заказе должно быть окно подтверждения или отмены заказа, после этого заказ попадает в очередь к бармену.
-# MVP готов, осталось навести марафет, какие-то новые фичи и функции.
 import logging
 import datetime
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 
-from modules.database import Database
-from modules.product import Product
-from modules.order import Order
-from modules.user import User
-
-from telegram import ForceReply, Update, InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.constants import ParseMode
-from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters, CallbackContext
-
-# Тексты для меню
+from bot.database import Database, Product, Order
 
 
-
-# Создание клавиатур
-
-
-# Не могу полноценно пользоваться классом из-за асинхронного программирования. self не работает в классах с async функциями :( Обойти пытался, но наследование всё равно работает через очко, поэтому пока так.
 class Customer:
     CUSTOMER_MENU_TEXT = "<b>Менюшечка</b>\n\n"
     SHOW_PRODUCTS_TEXT = "<b>Барная карта</b>\n\n Нажмите на напиток, чтобы показать подробности."

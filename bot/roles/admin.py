@@ -1,12 +1,8 @@
-# Админ может делать всё, быть барменом, либо заказчиком. 
-# Также какие-то логи возможно смотреть и прочую техническую часть. 
-# Назначать бармена, и прочее прочее.
-# Здеся либо класс, либо просто написать логику для менюшек, какие-то функции только для админа и прочее, прочее.
 import logging
 
-from telegram import ForceReply, Update, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import  Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.constants import ParseMode
-from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters, CallbackContext
+from telegram.ext import CallbackContext
 
 # Pre-assign menu text
 FIRST_MENU_MARKUP = None
