@@ -1,22 +1,10 @@
-import datetime
 import sqlite3
-from typing import List, Any
 
-# for work when bot running
-from modules.user import User
-from modules.product import Product
-from modules.order import Order
+from bot.database.user import User
+from bot.database.product import Product
+from bot.database.order import Order
 
-database_path = 'data/database.db'
-
-
-# for testing database
-"""from user import User
-from product import Product
-from order import Order
-
-database_path = '../../data/database.db'"""
-
+database_path = '../data/database.db'
 
 class Database:
     def __init__(self):
@@ -225,27 +213,3 @@ class Database:
             UPDATE orders SET barman_id = ?, status = ? WHERE date = ?""", (order.barman_id, order.status, order.date,))
         conn.commit()
         conn.close()
-
-
-"""    def get_product_by_name(self, name) -> Product:
-        conn = sqlite3.connect(database_path)
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM Products WHERE name = ?', (name))
-        found_product = cur.fetchone()
-        conn.close()
-
-        return Product(found_product[0], found_product[1], found_product[2])"""  # Пока не требуется (и пока не работает)
-
-"""    def find_in_table_by_value_in_row(self, table_name, column_title, value) -> object:
-        conn = sqlite3.connect(database_path)
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM ? WHERE ? = ?', (table_name, column_title, value))
-        found = cur.fetchone()
-        conn.close()
-        return found"""  # Не работают ? в SQLе (Наверное и не понадобится)
-
-# tests area
-"""order = Order("qdqd", "Шот", 234124, 133, 'placed')
-db = Database()
-db.create_tables()
-db.insert_order(order)"""

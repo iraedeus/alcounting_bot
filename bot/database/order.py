@@ -1,13 +1,6 @@
 import datetime
 
-
-# for bot work
-from modules.product import Product
-
-# for testing database
-
-"""from product import Product"""
-
+from bot.database.product import Product
 
 class Order:
 
@@ -25,7 +18,7 @@ class Order:
     """def get_order_id(self) -> int:
         return self.id"""
 
-    def get_order_customer_id(self) -> str:
+    def get_order_customer_id(self) -> int:
         return self.customer_id
 
     def get_order_product(self) -> Product:
