@@ -1,0 +1,19 @@
+[texts]
+start = 'Привет! Я бот. Нажимай на кнопку "/help" для получения подсказок по командам.'
+start_description = 'Запуск и перезапуск бота.'
+help = 'Помощь'
+help_description = 'Показывает список доступных команд.'
+menu = 'Менюшечка'
+menu_description = 'Показывает менюшечку.'
+show_products_text = '<b>Барная карта</b>&#10;Нажмите на напиток, чтобы показать подробности.'
+make_order_text = '<b>Выбор напитка</b>&#10;Нажмите на напиток, чтобы заказать'
+show_orders_text = '<b>Мои заказы</b>  '
+show_products_button = 'Барная карта'
+make_order_button = 'Сделать заказ'
+show_orders_button = 'Мои заказы'
+approve_orders_button = 'Подтвердить заказ.'
+back_to_menu_button = 'Вернуться в главное меню'
+back_button = 'Назад'
+queue_button = "Очередь заказов"
+queue_text = "<b>Очередь</b>"
+complete_button = "Завершить заказ"

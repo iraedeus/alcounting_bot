@@ -57,7 +57,6 @@ class Database:
 
     def __del__(self):
         self.conn.close()
-        logging.getLogger(__name__).debug("Database closed")
 
     def fix_path(self, path: str) -> None:
         """Create a directory and file if they do not exist"""
@@ -76,6 +75,7 @@ class Database:
             VALUES (?, ?, ?)""",
             (user.id, user.name, user.type),
         )
+        self.conn.commit()
 
     def insert_product(self, product: Product) -> None:
         """Insert a new product into the Products table."""
@@ -87,6 +87,7 @@ class Database:
             VALUES (?, ?, ?)""",
             (product.name, product.description, product.price),
         )
+        self.conn.commit()
 
     def insert_order(self, order: Order) -> None:
         """Insert a new order into the Orders table."""
@@ -104,24 +105,28 @@ class Database:
                 order.status,
             ),
         )
+        self.conn.commit()
 
     def delete_user(self, user: User) -> None:
         """Delete a user from the Users table."""
         if user is None:
             raise ValueError("User cannot be None")
         self.cur.execute("DELETE FROM Users WHERE id = ?", (user.id,))
+        self.conn.commit()
 
     def delete_product(self, product: Product) -> None:
         """Delete a product from the Products table."""
         if product is None:
             raise ValueError("Product cannot be None")
         self.cur.execute("DELETE FROM Products WHERE name = ?", (product.name,))
+        self.conn.commit()
 
     def delete_order(self, order: Order) -> None:
         """Delete an order from the Orders table."""
         if order is None:
             raise ValueError("Order cannot be None")
         self.cur.execute("DELETE FROM Orders WHERE date = ?", (order.date,))
+        self.conn.commit()
 
     def get_all_products(self) -> list[Product]:
         """Retrieve all products from the Products table."""
@@ -182,6 +187,7 @@ class Database:
             UPDATE Users SET name = ?, type = ? WHERE id = ?""",
             (user.name, user.type, user.id),
         )
+        self.conn.commit()
 
     def update_product(self, product: Product) -> None:
         """Update a product in the Products table."""
@@ -192,6 +198,7 @@ class Database:
             UPDATE Products SET description = ?, price = ? WHERE name = ?""",
             (product.description, product.price, product.name),
         )
+        self.conn.commit()
 
     def update_order(self, order: Order) -> None:
         """Update an order in the Orders table."""
@@ -202,3 +209,4 @@ class Database:
             UPDATE Orders SET barman_id = ?, status = ? WHERE date = ?""",
             (order.barman_id, order.status, order.date),
         )
+        self.conn.commit()

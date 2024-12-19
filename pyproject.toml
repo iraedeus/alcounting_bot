@@ -10,6 +10,7 @@ package-mode = false
 [tool.poetry.dependencies]
 python = "^3.13"
 python-telegram-bot = "^21.4"
+toml = "^0.10.2"
 
 [tool.poetry.group.dev.dependencies]
 commitizen = "^4.1.0"
@@ -24,6 +25,7 @@ pytest-sugar = "^1.0.0"
 
 [tool.pytest.ini_options]
 addopts = "--flake8"
+flake8-max-line-length = 100
 
 [build-system]
 requires = ["poetry-core"]

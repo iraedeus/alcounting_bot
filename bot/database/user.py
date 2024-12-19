@@ -9,7 +9,7 @@ class User:
 
     id: int
     name: str
-    type: str
+    type: str = "customer"
 
     def __post_init__(self):
         """Post-initialization processing."""
