@@ -2,7 +2,7 @@
 This module defines the Admin role for the bot.
 """
 
-from bot.roles import Barman
+from bot.roles.barman import Barman
 
 
 class Admin(Barman):
