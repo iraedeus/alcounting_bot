@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  lint-and-test:
+  pylint:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -58,9 +58,57 @@ jobs:
     - name: Analysing the code with pylint
       run: poetry run pylint bot
 
-    - name: Analysing the code with flake8
-      run: poetry run flake8 bot
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.13" ]
 
-    - name: Test with pytest
-      run: |
-        poetry run pytest -v
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache Poetry
+        id: cache-poetry
+        uses: actions/cache@v2.1.5
+        with:
+          path: ~/.poetry
+          key: ${{ matrix.os }}-poetry
+
+      - name: Install latest version of Poetry
+        if: steps.cache-poetry.outputs.cache-hit != 'true'
+        run: |
+          curl -sSL https://install.python-poetry.org | python -
+
+      - name: Add Poetry to $PATH
+        run: |
+          echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+
+      - name: Get Poetry version
+        run: poetry --version
+
+      - name: Check pyproject.toml validity
+        run: poetry check --no-interaction
+
+      - name: Cache dependencies
+        id: cache-deps
+        uses: actions/cache@v2.1.5
+        with:
+          path: ${{github.workspace}}/.venv
+          key: ${{ matrix.os }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: ${{ matrix.os }}-
+
+      - name: Install deps
+        if: steps.cache-deps.cache-hit != 'true'
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install --no-interaction
+
+      - name: Test with pytest
+        run: |
+          poetry run pytest -v --cov=bot
