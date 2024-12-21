@@ -1,0 +1,11 @@
+services:
+  bot:
+    build:
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - database-data:/app/data
+
+volumes:
+  database-data:

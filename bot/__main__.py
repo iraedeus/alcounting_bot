@@ -3,7 +3,7 @@ import logging
 from telegram import Update
 from telegram.ext import Application
 
-from handlers import register_handlers
+from bot.handlers import register_handlers
 
 # Set up logging
 logging.basicConfig(
