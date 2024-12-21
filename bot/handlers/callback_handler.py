@@ -12,7 +12,7 @@ from bot.roles import role_associations
 from bot.settings import load_texts
 
 
-async def callback_handler(update: Update, context: CallbackContext) -> None:
+async def callback_handler(update: Update, _context: CallbackContext) -> None:
     """
     This handler processes the inline buttons on the menu.
     """

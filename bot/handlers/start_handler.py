@@ -10,7 +10,7 @@ from bot.database import Database, User
 from bot.settings import load_texts
 
 
-async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def start_handler(update: Update, _context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
     logging.getLogger(__name__).info(
         "%s use %s", update.message.from_user.id, update.message.text

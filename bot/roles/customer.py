@@ -20,6 +20,12 @@ class Customer:
         self.db = db
         self.tg_user_id = tg_user_id
         self.texts = texts
+        self.back_to_menu_button = [
+            InlineKeyboardButton(
+                self.texts["back_to_menu_button"],
+                callback_data=self.texts["back_to_menu_button"],
+            )
+        ]
 
     def create_customer_menu_buttons(self):
         """Create buttons for the customer menu."""
@@ -65,14 +71,7 @@ class Customer:
                 buttons.append([button])
         else:
             logging.getLogger(__name__).info("No products in database")
-        buttons.append(
-            [
-                InlineKeyboardButton(
-                    self.texts["back_to_menu_button"],
-                    callback_data=self.texts["back_to_menu_button"],
-                )
-            ]
-        )
+        buttons.append(self.back_to_menu_button)
         return InlineKeyboardMarkup(buttons)
 
     def __build_show_product_info_menu(self, data) -> InlineKeyboardMarkup:
@@ -87,12 +86,7 @@ class Customer:
                     callback_data=self.texts["show_products_button"],
                 )
             ],
-            [
-                InlineKeyboardButton(
-                    self.texts["back_to_menu_button"],
-                    callback_data=self.texts["back_to_menu_button"],
-                )
-            ],
+            self.back_to_menu_button,
         ]
         return InlineKeyboardMarkup(buttons)
 
@@ -118,12 +112,7 @@ class Customer:
                     callback_data=self.texts["make_order_button"],
                 )
             ],
-            [
-                InlineKeyboardButton(
-                    self.texts["back_to_menu_button"],
-                    callback_data=self.texts["back_to_menu_button"],
-                )
-            ],
+            self.back_to_menu_button,
         ]
         return InlineKeyboardMarkup(buttons)
 
@@ -133,12 +122,7 @@ class Customer:
         """
         buttons = [
             [InlineKeyboardButton(self.texts["back_button"], callback_data=pre_data)],
-            [
-                InlineKeyboardButton(
-                    self.texts["back_to_menu_button"],
-                    callback_data=self.texts["back_to_menu_button"],
-                )
-            ],
+            self.back_to_menu_button,
         ]
         return InlineKeyboardMarkup(buttons)
 
@@ -158,14 +142,7 @@ class Customer:
             logging.getLogger(__name__).info(
                 "No orders found for user %s", self.tg_user_id
             )
-        buttons.append(
-            [
-                InlineKeyboardButton(
-                    self.texts["back_to_menu_button"],
-                    callback_data=self.texts["back_to_menu_button"],
-                )
-            ]
-        )
+        buttons.append(self.back_to_menu_button)
         return InlineKeyboardMarkup(buttons)
 
     def __build_show_order_info_menu(self) -> InlineKeyboardMarkup:
@@ -179,12 +156,7 @@ class Customer:
                     callback_data=self.texts["show_orders_button"],
                 )
             ],
-            [
-                InlineKeyboardButton(
-                    self.texts["back_to_menu_button"],
-                    callback_data=self.texts["back_to_menu_button"],
-                )
-            ],
+            self.back_to_menu_button,
         ]
         return InlineKeyboardMarkup(buttons)
 

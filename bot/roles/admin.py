@@ -9,5 +9,3 @@ class Admin(Barman):
     """
     Represents an admin role in the bot.
     """
-
-    pass

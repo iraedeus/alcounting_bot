@@ -9,7 +9,7 @@ from telegram.ext import ContextTypes
 from bot.settings import load_texts
 
 
-async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def help_handler(update: Update, _context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /help is issued."""
     logging.getLogger(__name__).info(
         "%s use %s", update.message.from_user.id, update.message.text

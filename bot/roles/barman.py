@@ -44,14 +44,7 @@ class Barman(Customer):
                 buttons.append([button])
         else:
             logging.getLogger(__name__).info("No orders in database")
-        buttons.append(
-            [
-                InlineKeyboardButton(
-                    self.texts["back_to_menu_button"],
-                    callback_data=self.texts["back_to_menu_button"],
-                )
-            ]
-        )
+        buttons.append(self.back_to_menu_button)
         return InlineKeyboardMarkup(buttons)
 
     def __build_pre_complete_order_menu(self, data) -> InlineKeyboardMarkup:
@@ -66,12 +59,7 @@ class Barman(Customer):
                     self.texts["back_button"], callback_data=self.texts["queue_button"]
                 )
             ],
-            [
-                InlineKeyboardButton(
-                    self.texts["back_to_menu_button"],
-                    callback_data=self.texts["back_to_menu_button"],
-                )
-            ],
+            self.back_to_menu_button,
         ]
         return InlineKeyboardMarkup(buttons)
 
@@ -82,12 +70,7 @@ class Barman(Customer):
                     self.texts["back_button"], callback_data=self.texts["queue_button"]
                 )
             ],
-            [
-                InlineKeyboardButton(
-                    self.texts["back_to_menu_button"],
-                    callback_data=self.texts["back_to_menu_button"],
-                )
-            ],
+            self.back_to_menu_button,
         ]
         return InlineKeyboardMarkup(buttons)
 
