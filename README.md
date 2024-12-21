@@ -97,27 +97,29 @@ pip install -r requirements.txt
 export BOT_TOKEN=your_token
 
 # Run the bot
-poetry run python bot/__main__.py
+poetry run python -m bot.__main__
 
 # For convenience, you can use screen or tmux to keep the bot running in the background:
 
 # Using screen
 screen -S alcounting_bot
-poetry run python bot/__main__.py
+poetry run python -m bot.__main__
 
 # Using tmux
 tmux new -s alcounting_bot
-poetry run python bot/__main__.py
+poetry run python -m bot.__main__ 
 ```
 
 That's it!  
 The bot will now run in the background, processing user requests.  
 To stop the bot, press `Ctrl+C`.
 
-TODO: Add the Docker installation method instructions.
 ##### Local Installation Docker Method
-```shell
+Firstly, you need to create `.env` file. You can find example in `.env.example`.
 
+```shell
+# To run bot in Docker container, simply use following command
+docker compose build && docker compose up
 ```
 
 > To host the bot remotely instead of running it locally, you'll need to set up a hosting environment.
