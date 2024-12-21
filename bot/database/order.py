@@ -1,52 +1,54 @@
-import datetime
+"""Module for the Order class."""
 
-from bot.database.product import Product
+from dataclasses import dataclass
 
+
+@dataclass
 class Order:
+    """Class representing an order in the system."""
 
-    def __init__(self, date, product, customer_id, barman_id, status) -> None:
-        """self.id = id"""
-        self.date: str = date
-        self.product: str = product
-        self.customer_id: int = customer_id
-        self.barman_id: int = barman_id
-        self.status: str = status
+    date: str
+    product: str
+    customer_id: int
+    barman_id: int
+    status: str
 
-        if self.status not in ['размещён', 'завершён']:
-            raise ValueError("Invalid status type")
-
-    """def get_order_id(self) -> int:
-        return self.id"""
-
-    def get_order_customer_id(self) -> int:
-        return self.customer_id
-
-    def get_order_product(self) -> Product:
-        return self.choice
-
-    def get_order_date(self) -> datetime:
+    def get_order_date(self) -> str:
+        """Get the date of the order."""
         return self.date
 
-    def get_order_status(self) -> str:
-        return self.status
+    def get_order_product(self) -> str:
+        """Get the product of the order."""
+        return self.product
 
-    def get_order_barman_id(self) -> str:
+    def get_order_customer_id(self) -> int:
+        """Get the customer ID of the order."""
+        return self.customer_id
+
+    def get_order_barman_id(self) -> int:
+        """Get the barman ID of the order."""
         return self.barman_id
 
-    """def set_order_id(self, val) -> None:
-        self.id = val"""
+    def get_order_status(self) -> str:
+        """Get the status of the order."""
+        return self.status
 
-    def set_order_customer_id(self, val) -> None:
-        self.customer_id = val
+    def set_order_date(self, date: str):
+        """Set the date of the order."""
+        self.date = date
 
-    def get_order_product(self, val) -> None:
-        self.product = val
+    def set_order_product(self, product: str):
+        """Set the product of the order."""
+        self.product = product
 
-    def set_order_date(self, val) -> None:
-        self.date = val
+    def set_order_customer_id(self, customer_id: int):
+        """Set the customer ID of the order."""
+        self.customer_id = customer_id
 
-    def set_order_status(self, val) -> None:
-        self.status = val
+    def set_order_barman_id(self, barman_id: int):
+        """Set the barman ID of the order."""
+        self.barman_id = barman_id
 
-    def set_order_barman_id(self, val) -> None:
-        self.barman_id = val
+    def set_order_status(self, status: str):
+        """Set the status of the order."""
+        self.status = status

@@ -1,9 +1,13 @@
+"""
+This module initializes and runs the bot application.
+"""
+
 import os
 import logging
 from telegram import Update
 from telegram.ext import Application
 
-from handlers import register_handlers
+from bot.handlers import register_handlers
 
 # Set up logging
 logging.basicConfig(
@@ -18,12 +22,12 @@ logger = logging.getLogger(__name__)
 def main() -> None:
     """Allow running a bot."""
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token(os.getenv('BOT_TOKEN')).build()
+    application = Application.builder().token(os.getenv("BOT_TOKEN")).build()
 
     # Register all handlers
     register_handlers(application)
 
-    # Run the bot until the user presses Ctrl-C
+    # Run the bot
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 

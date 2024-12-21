@@ -1,101 +1,126 @@
-import logging
-from telegram import ForceReply, Update, InlineKeyboardMarkup, InlineKeyboardButton
+"""
+This module contains the Barman class which represents a barman interacting with the bot.
+"""
 
+import logging
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from bot.roles.customer import Customer
-from bot.database import Database, Order
+from bot.database import Database
 
 
 class Barman(Customer):
-    QUEUE_BUTTON = "Очередь заказов"
-    QUEUE_TEXT = "<b>Очередь</b>"
-    COMPLETE_BUTTON = "Завершить заказ"
+    """
+    A class to represent a barman interacting with the bot.
+    """
+
+    def __init__(self, db: Database, tg_user_id: int, texts: dict):
+        super().__init__(db, tg_user_id, texts)
+        self.texts = texts
 
     def create_barman_buttons_menu(self):
-        buttons = Customer.create_customer_menu_buttons(Customer)
-        buttons.append([InlineKeyboardButton(self.QUEUE_BUTTON, callback_data=self.QUEUE_BUTTON)])
+        """Create buttons for the barman menu"""
+        buttons = self.create_customer_menu_buttons()
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    self.texts["queue_button"], callback_data=self.texts["queue_button"]
+                )
+            ]
+        )
         return buttons
 
-    def build_barman_menu(self):
-        return InlineKeyboardMarkup(self.create_barman_buttons_menu(self))
+    def build_menu(self) -> InlineKeyboardMarkup:
+        return InlineKeyboardMarkup(self.create_barman_buttons_menu())
 
-    def build_queue_menu(self) -> InlineKeyboardMarkup:
-        db = Database()
-        my_orders = db.get_orders_queue()
+    def __build_queue_menu(self) -> InlineKeyboardMarkup:
+        my_orders = self.db.get_orders_queue()
         buttons = []
         if my_orders is not None:
             for my_order in my_orders:
-                button = InlineKeyboardButton(f'{my_order.date[:-7]} {my_order.product}', callback_data=f'chose_{my_order.date}')
+                button = InlineKeyboardButton(
+                    f"{my_order.date[:-7]} {my_order.product}",
+                    callback_data=f"complete_{my_order.date}",
+                )
                 buttons.append([button])
         else:
-            logging.getLogger(__name__).info(f"No orders in database")
-        buttons.append(
-            [InlineKeyboardButton(Customer.BACK_TO_MENU_BUTTON, callback_data=Customer.BACK_TO_MENU_BUTTON)])
+            logging.getLogger(__name__).info("No orders in database")
+        buttons.append(self.back_to_menu_button)
         return InlineKeyboardMarkup(buttons)
 
-    def build_pre_complete_order_menu(self, data):
-        return InlineKeyboardMarkup([[InlineKeyboardButton(self.COMPLETE_BUTTON, callback_data=data)],
-                                    [InlineKeyboardButton(Customer.BACK_BUTTON, callback_data=self.QUEUE_BUTTON)],
-                                    [InlineKeyboardButton(Customer.BACK_TO_MENU_BUTTON, callback_data=Customer.BACK_TO_MENU_BUTTON)]
-                                    ])
+    def __build_pre_complete_order_menu(self, data) -> InlineKeyboardMarkup:
+        buttons = [
+            [
+                InlineKeyboardButton(
+                    self.texts["complete_button"], callback_data="c" + data
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    self.texts["back_button"], callback_data=self.texts["queue_button"]
+                )
+            ],
+            self.back_to_menu_button,
+        ]
+        return InlineKeyboardMarkup(buttons)
 
-    def build_complete_order_menu(self):
-        return InlineKeyboardMarkup([
-            [InlineKeyboardButton(Customer.BACK_BUTTON, callback_data=self.QUEUE_BUTTON)],
-            [InlineKeyboardButton(Customer.BACK_TO_MENU_BUTTON, callback_data=Customer.BACK_TO_MENU_BUTTON)]
-            ])
+    def __build_complete_order_menu(self) -> InlineKeyboardMarkup:
+        buttons = [
+            [
+                InlineKeyboardButton(
+                    self.texts["back_button"], callback_data=self.texts["queue_button"]
+                )
+            ],
+            self.back_to_menu_button,
+        ]
+        return InlineKeyboardMarkup(buttons)
 
-    def back_to_barman_menu(self, data, tg_user_id):
-        text = ''
-        markup = None
-
-        # Обработка кнопки назад в меню
-        if data == self.BACK_TO_MENU_BUTTON:
-            logging.getLogger(__name__).info(f'{tg_user_id} return to the barman_menu')
-            text = self.CUSTOMER_MENU_TEXT
-            markup = self.build_barman_menu(self)
-
-            return text, markup
-
-
-    def on_button_tap(self, data, tg_user_id):
-        text = ''
-        markup = None
-
-        text, markup = Customer.on_button_tap(Customer, data, tg_user_id)
-
-        db = Database()
-
-        my_orders: list[Order] = db.get_all_orders()
-        order_dates = [str(Order.get_order_date()) for Order in my_orders]
-
-
-        if data == self.QUEUE_BUTTON:
-            logging.getLogger(__name__).info(
-                f'{tg_user_id} press the QUEUE_BUTTON or return to the QUEUE menu')
-            text = f'{self.QUEUE_BUTTON}'
-            markup = self.build_queue_menu(self)
-
-        if data[6:] in order_dates and data[:6] == "chose_":
-            logging.getLogger(__name__).info(f'{tg_user_id} watch for the {data}')
-            db = Database()
-            order = db.get_order_by_date(data[6:])
-            text = f'''
-            Заказ от: {order.date[:-7]}\nПродукт: {order.product}\nId покупателя: {order.customer_id}\nId бармена: {order.barman_id}\nСтатус: {order.status}'''
-            markup = self.build_pre_complete_order_menu(self, str("next"+data))
-
-        if data[10:] in order_dates and data[:10] == "nextchose_":
-            db = Database()
-            order = db.get_order_by_date(data[10:])
-            order.set_order_barman_id(tg_user_id)
-            order.set_order_status("завершён")
-            db.update_order(order)
-            text = f'''Заказ завершён!!!\nОт: {order.date[:-7]}\nПродукт: {order.product}\nId покупателя: {order.customer_id}\nId бармена: {order.barman_id}\nСтатус: {order.status}'''
-            markup = self.build_complete_order_menu(self)
-
-
-
+    def __handle_queue_button(self):
+        logging.getLogger(__name__).info(
+            "%s press the QUEUE_BUTTON or return to the QUEUE menu", self.tg_user_id
+        )
+        text = self.texts["queue_text"]
+        markup = self.__build_queue_menu()
         return text, markup
 
+    def __handle_pre_complete_order(self, data):
+        logging.getLogger(__name__).info("%s watch for the %s", self.tg_user_id, data)
+        order = self.db.get_order_by_date(data[9:])
+        text = (
+            f"""Заказ от: {order.date[:-7]}\n"""
+            f"""Продукт: {order.product}\n"""
+            f"""Id покупателя: {order.customer_id}\n"""
+            f"""Id бармена: {order.barman_id}\n"""
+            f"""Статус: {order.status}"""
+        )
+        markup = self.__build_pre_complete_order_menu(data)
+        return text, markup
 
+    def __handle_complete_order(self, data):
+        logging.getLogger(__name__).info("%s approved the %s", self.tg_user_id, data)
+        order = self.db.get_order_by_date(data[10:])
+        order.set_order_barman_id(self.tg_user_id)
+        order.set_order_status("завершён")
+        self.db.update_order(order)
+        text = (
+            f"""Заказ завершён!!!\n"""
+            f"""От: {order.date[:-7]}\n"""
+            f"""Продукт: {order.product}\n"""
+            f"""Id покупателя: {order.customer_id}\n"""
+            f"""Id бармена: {order.barman_id}\n"""
+            f"""Статус: {order.status}"""
+        )
+        markup = self.__build_complete_order_menu()
+        return text, markup
 
+    def on_button_tap(self, data) -> (str, InlineKeyboardMarkup):
+        text, markup = super().on_button_tap(data)
 
+        if text != "Err0r":
+            return text, markup
+        if data == self.texts["queue_button"]:
+            return self.__handle_queue_button()
+        if data.startswith("complete_"):
+            return self.__handle_pre_complete_order(data)
+        if data.startswith("ccomplete_"):
+            return self.__handle_complete_order(data)
+        return "Err0r", self.build_menu()
