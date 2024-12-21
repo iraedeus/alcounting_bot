@@ -1,5 +1,4 @@
-
-[![Actions](https://github.com/NikitosKey/alcounting_bot/actions/workflows/main.yml/badge.svg)](https://github.com/NikitosKey/alcounting_bot/actions/workflows/main.yml)
+[![code-quality](https://github.com/NikitosKey/alcounting_bot/actions/workflows/python-poetry-code-quality.yml/badge.svg)](https://github.com/NikitosKey/alcounting_bot/actions/workflows/python-poetry-code-quality.yml)
 
 # Alcounting Telegram Bot
 
