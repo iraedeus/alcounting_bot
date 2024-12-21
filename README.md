@@ -8,7 +8,8 @@ A bot designed to help manage parties and prevent organizers from going into the
 
 - [Description](#description)
 - [Guide](#Guide)
-- [User Documentation](#user-documentation)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
 
 ## Description
 
