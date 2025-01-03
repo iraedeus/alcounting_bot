@@ -85,11 +85,13 @@ class Barman(Customer):
     def __handle_pre_complete_order(self, data):
         logging.getLogger(__name__).info("%s watch for the %s", self.tg_user_id, data)
         order = self.db.get_order_by_date(data[9:])
+        customer_name = self.db.get_user_by_id(order.customer_id).name
+        barman = self.db.get_user_by_id(order.barman_id)
         text = (
             f"""Заказ от: {order.date[:-7]}\n"""
             f"""Продукт: {order.product}\n"""
-            f"""Id покупателя: {order.customer_id}\n"""
-            f"""Id бармена: {order.barman_id}\n"""
+            f"""Покупатель: {customer_name}\n"""
+            f"""Бармен: {barman}\n"""
             f"""Статус: {order.status}"""
         )
         markup = self.__build_pre_complete_order_menu(data)
@@ -101,12 +103,14 @@ class Barman(Customer):
         order.set_order_barman_id(self.tg_user_id)
         order.set_order_status("завершён")
         self.db.update_order(order)
+        customer_name = self.db.get_user_by_id(order.customer_id).name
+        barman_name = self.db.get_user_by_id(order.barman_id).name
         text = (
             f"""Заказ завершён!!!\n"""
             f"""От: {order.date[:-7]}\n"""
             f"""Продукт: {order.product}\n"""
-            f"""Id покупателя: {order.customer_id}\n"""
-            f"""Id бармена: {order.barman_id}\n"""
+            f"""Покупатель: {customer_name}\n"""
+            f"""Бармен: {barman_name}\n"""
             f"""Статус: {order.status}"""
         )
         markup = self.__build_complete_order_menu()
