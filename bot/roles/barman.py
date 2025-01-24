@@ -82,18 +82,26 @@ class Barman(Customer):
         markup = self.__build_queue_menu()
         return text, markup
 
+    def __pre_complete_order_text(self, order, customer_name, barman_name):
+        return (
+            self.texts["order_time"]
+            + str(order.date[:-7])
+            + self.texts["order_product"]
+            + str(order.product)
+            + self.texts["order_customer"]
+            + str(customer_name)
+            + self.texts["order_barman"]
+            + str(barman_name)
+            + self.texts["order_status"]
+            + str(order.status)
+        )
+
     def __handle_pre_complete_order(self, data):
         logging.getLogger(__name__).info("%s watch for the %s", self.tg_user_id, data)
         order = self.db.get_order_by_date(data[9:])
         customer_name = self.db.get_user_by_id(order.customer_id).name
         barman = self.db.get_user_by_id(order.barman_id)
-        text = (
-            f"""Заказ от: {order.date[:-7]}\n"""
-            f"""Продукт: {order.product}\n"""
-            f"""Покупатель: {customer_name}\n"""
-            f"""Бармен: {barman}\n"""
-            f"""Статус: {order.status}"""
-        )
+        text = self.__pre_complete_order_text(order, customer_name, barman)
         markup = self.__build_pre_complete_order_menu(data)
         return text, markup
 
@@ -105,13 +113,8 @@ class Barman(Customer):
         self.db.update_order(order)
         customer_name = self.db.get_user_by_id(order.customer_id).name
         barman_name = self.db.get_user_by_id(order.barman_id).name
-        text = (
-            f"""Заказ завершён!!!\n"""
-            f"""От: {order.date[:-7]}\n"""
-            f"""Продукт: {order.product}\n"""
-            f"""Покупатель: {customer_name}\n"""
-            f"""Бармен: {barman_name}\n"""
-            f"""Статус: {order.status}"""
+        text = self.texts["order_completed"] + self.__pre_complete_order_text(
+            order, customer_name, barman_name
         )
         markup = self.__build_complete_order_menu()
         return text, markup

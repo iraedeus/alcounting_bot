@@ -57,16 +57,16 @@ class Customer:
         buttons = self.create_customer_menu_buttons()
         return InlineKeyboardMarkup(buttons)
 
-    def __build_show_products_menu(self) -> InlineKeyboardMarkup:
+    def __build_products_menu(self, prefix) -> InlineKeyboardMarkup:
         """
-        Build the menu to show products.
+        Build the menu to show products to make an order or show product information.
         """
         my_products = self.db.get_all_products()
         buttons = []
         if my_products is not None:
             for product in my_products:
                 button = InlineKeyboardButton(
-                    product.name, callback_data=f"shown_{product.name}"
+                    product.name, callback_data=prefix + product.name
                 )
                 buttons.append([button])
         else:
@@ -169,7 +169,7 @@ class Customer:
             self.tg_user_id,
         )
         text = self.texts["show_products_text"]
-        markup = self.__build_show_products_menu()
+        markup = self.__build_products_menu("shown_")
         return text, markup
 
     def __handle_make_order_button(self):
@@ -181,7 +181,7 @@ class Customer:
             self.tg_user_id,
         )
         text = self.texts["make_order_text"]
-        markup = self.__build_show_products_menu()
+        markup = self.__build_products_menu("chose_")
         return text, markup
 
     def __handle_show_orders_button(self):
@@ -205,9 +205,9 @@ class Customer:
         )
         product: Product = self.db.get_product_by_name(data[6:])
         text = (
-            f"""<b>{product.name}</b>\n"""
-            f"""<b>Описание:</b>\n{product.description}\n"""
-            f"""<b>Цена:</b> {product.price}руб."""
+            f"<b>{product.name}</b>"
+            f"{self.texts['product_description']} {product.description}"
+            f"{self.texts['product_price']} {product.price}"
         )
         markup = self.__build_show_product_info_menu(data)
         return text, markup
@@ -217,7 +217,10 @@ class Customer:
         Handle the pre-approve order button press.
         """
         logging.getLogger(__name__).info("%s chosen the %s", self.tg_user_id, data)
-        text = f"Выбран <b>{data[6:]},</b>.\nПодтвердите ваш заказ."
+        text = (
+            f"{self.texts['chosen_product']} <b>{data[6:]}</b>"
+            f'{self.texts["confirm_order"]}'
+        )
         markup = self.__build_pre_approve_order_menu(f"next{data}")
         return text, markup
 
@@ -231,9 +234,10 @@ class Customer:
         )
         self.db.insert_order(order)
         text = (
-            f"<b>Заказ оформлен!</b>\n"
-            f"Время заказа: {order.date[:-7]}\n"
-            f"Продукт:\n{order.product}\nСтатус: {order.status}"
+            f'{self.texts["order_created"]}'
+            f'{self.texts["order_time"]} {order.date[:-7]}'
+            f'{self.texts["order_product"]} \n{order.product}'
+            f'{self.texts["order_status"]} {order.status}'
         )
         markup = self.__build_approve_order_menu(data[4:])
         return text, markup
@@ -246,10 +250,10 @@ class Customer:
         order = self.db.get_order_by_date(data)
         barman = self.db.get_user_by_id(order.barman_id)
         text = (
-            f"""<b>Заказ от:</b> {order.date[:-7]}\n"""
-            f"""<b>Продукт:</b> {order.product}\n"""
-            f"""<b>Бармен:</b> {barman if barman is None else barman.name}\n"""
-            f"""<b>Статус:</b> {order.status}"""
+            f'{self.texts["order_date"]} {order.date[:-7]}'
+            f'{self.texts["order_product"]} {order.product}'
+            f'{self.texts["order_barman"]} {barman if barman is None else barman.name}'
+            f'{self.texts["order_status"]} {order.status}'
         )
         markup = self.__build_show_order_info_menu()
         return text, markup
@@ -270,9 +274,7 @@ class Customer:
         for callback_prefix, action in [
             ("shown_", self.__handle_product_info),
             ("chose_", self.__handle_pre_approve_order),
-            ("hown_", self.__handle_pre_approve_order),
             ("nextchose_", self.__handle_approve_order),
-            ("nextshown_", self.__handle_approve_order),
         ]:
             if data.startswith(callback_prefix):
                 return action(data)
@@ -284,4 +286,4 @@ class Customer:
             return top_menus_associations[data]()
 
         logging.getLogger(__name__).error("Incorrect button pressed")
-        return "Err0r", self.build_menu()
+        return self.texts["error"], self.build_menu()
