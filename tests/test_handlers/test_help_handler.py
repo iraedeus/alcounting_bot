@@ -7,7 +7,9 @@ from bot.settings import load_texts
 
 @pytest.mark.asyncio
 async def test_help_handler():
-    telegram_user = TelegramUser(id=1, first_name="Test", is_bot=False, language_code="ru")
+    telegram_user = TelegramUser(
+        id=1, first_name="Test", is_bot=False, language_code="ru"
+    )
 
     message = MagicMock(spec=Message)
     message.from_user = telegram_user
